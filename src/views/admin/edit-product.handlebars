@@ -1,0 +1,50 @@
+<h1>Editar producto ID {{product._id}}</h1>
+
+<nav>
+    <a href="/admin/products">Atrás</a>
+</nav>
+
+<form id="editProductForm">
+    <input type="hidden" id="productId" name="productId" value="{{product._id}}">
+
+    <div>
+        <label for="title">Título</label>
+        <input type="text" id="title" name="title" value="{{product.title}}" required>
+    </div>
+
+    <div>
+        <label for="description">Descripción</label>
+        <input type="text" id="description" name="description" value="{{product.description}}">
+    </div>
+
+    <div>
+        <label for="code">Código</label>
+        <input type="text" id="code" name="code" value="{{product.code}}" required>
+    </div>
+
+    <div>
+        <label for="price">Precio</label>
+        <input type="number" id="price" name="price" value="{{product.price}}">
+    </div>
+
+    <div>
+        <label for="stock">Stock</label>
+        <input type="number" id="stock" name="stock" value="{{product.stock}}">
+    </div>
+
+    <div>
+        <label for="category">Categoría</label>
+        <input type="text" id="category" name="category" value="{{product.category}}">
+    </div>
+
+    <div>
+        <label for="thumbnails">Imagen</label>
+        <input type="text" id="thumbnail" name="thumbnails" value="{{product.thumbnails}}">
+    </div>
+
+    <div>
+        <button type="submit">Editar</button>
+    </div>
+</form>
+
+<script src="/js/admin/edit-product.js"></script>

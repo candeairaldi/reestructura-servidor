@@ -1,0 +1,50 @@
+<h1>Carrito ID {{cart._id}}</h1>
+
+<nav>
+    <a href="/products">Atrás</a>
+</nav>
+
+{{#if cart.products}}
+<table>
+    <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Cantidad</th>
+        <th>Stock</th>
+        <th>Subtotal</th>
+    </tr>
+
+    {{#each cart.products}}
+    <tr>
+        <td>{{product.title}}</td>
+        <td>{{product.description}}</td>
+        <td>${{product.price}}</td>
+        <td>{{quantity}}</td>
+        <td>{{product.stock}}</td>
+        <td>${{total}}</td>
+        <td class="last-td">
+            <div>
+                <input type="number" id="quantity-{{product._id}}" class="cart-product-quantity-input"
+                    value="{{quantity}}" min="1" max="{{product.stock}}" onkeydown="return false">
+                <button onclick="updateProductQuantity('{{product._id}}', '{{../cart._id}}')">Modificar</button>
+            </div>
+        </td>
+        <td class="last-td">
+            <button onclick="removeProductFromCart('{{product._id}}', '{{../cart._id}}')">Eliminar</button>
+        </td>
+    </tr>
+    {{/each}}
+</table>
+
+<h3>Total ${{cart.total}}</h3>
+
+<div>
+    <button onclick="deleteCart('{{cart._id}}')">Vaciar</button>
+</div>
+
+{{else}}
+<h3>No hay productos seleccionados</h3>
+{{/if}}
+
+<script src="/js/user/cart.js"></script>

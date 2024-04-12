@@ -1,0 +1,48 @@
+<h1>Agregar producto</h1>
+
+<nav>
+    <a href="/admin/products">Atrás</a>
+</nav>
+
+<form id="addProductForm">
+    <div>
+        <label for="title">Título</label>
+        <input type="text" id="title" name="title" required>
+    </div>
+
+    <div>
+        <label for="description">Descripción</label>
+        <input type="text" id="description" name="description">
+    </div>
+
+    <div>
+        <label for="code">Código</label>
+        <input type="text" id="code" name="code" required>
+    </div>
+
+    <div>
+        <label for="price">Precio</label>
+        <input type="number" id="price" name="price">
+    </div>
+
+    <div>
+        <label for="stock">Stock</label>
+        <input type="number" id="stock" name="stock">
+    </div>
+
+    <div>
+        <label for="category">Categoría</label>
+        <input type="text" id="category" name="category">
+    </div>
+
+    <div>
+        <label for="thumbnails">Imagen</label>
+        <input type="text" id="thumbnail" name="thumbnails">
+    </div>
+
+    <div>
+        <button type="submit">Agregar producto</button>
+    </div>
+</form>
+
+<script src="/js/admin/add-product.js"></script>
