@@ -8,9 +8,10 @@ editProductForm.addEventListener('submit', async (event) => {
         description: editProductForm.description.value,
         code: editProductForm.code.value,
         price: editProductForm.price.value,
+        status: editProductForm.status.value,
         stock: editProductForm.stock.value,
         category: editProductForm.category.value,
-        thumbnails: editProductForm.thumbnails.value.split(',')
+        thumbnails: editProductForm.thumbnails.value
     }
     try {
         const response = await fetch(`/api/products/${productId}`, {

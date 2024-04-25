@@ -18,7 +18,7 @@ export default class CartsRouter extends CustomRouter {
     init() {
         this.post('/', ['PUBLIC'], CartsController.getInstance().createCart);
 
-        this.get('/:cid', ['PUBLIC'], CartsController.getInstance().getCartById);
+        this.get('/:cid', ['USER'], CartsController.getInstance().getCartById);
 
         this.post('/:cid/products/:pid', ['USER'], this.validateQuantity, CartsController.getInstance().addProduct);
 
@@ -26,14 +26,13 @@ export default class CartsRouter extends CustomRouter {
 
         this.delete('/:cid/products/:pid', ['USER'], CartsController.getInstance().removeProduct);
 
-        this.put('/:cid', ['PUBLIC'], CartsController.getInstance().updateCart);
-
         this.delete('/:cid', ['USER'], CartsController.getInstance().deleteCart);
+
+        this.post('/:cid/purchase', ['USER'], CartsController.getInstance().purchaseCart);
     }
 
     validateQuantity(req, res, next) {
-        const { quantity } = req.body;
-        req.body.quantity = quantity ? (parseInt(quantity) < 1 || isNaN(parseInt(quantity)) ? 1 : parseInt(quantity)) : 1;
+        req.quantity = req.body.quantity ? (parseInt(req.body.quantity) < 1 || isNaN(parseInt(req.body.quantity)) ? 1 : parseInt(req.body.quantity)) : 1;
         next();
     }
 }

@@ -1,13 +1,14 @@
+import ProductDTO from '../dao/dtos/product.dto.js';
 import { Products } from '../dao/factory.js';
 
-export default class ProductsServices {
+export default class ProductsRepository {
     static #instance;
 
     constructor() { }
 
     static getInstance() {
         if (!this.#instance) {
-            this.#instance = new ProductsServices();
+            this.#instance = new ProductsRepository();
         }
         return this.#instance;
     }
@@ -17,19 +18,14 @@ export default class ProductsServices {
             let { limit, page, status, category, sort } = queryParams;
             limit = limit ? (parseInt(limit) > 10 || parseInt(limit) < 1 || isNaN(parseInt(limit)) ? 10 : parseInt(limit)) : 10;
             page = page ? (parseInt(page) < 1 || isNaN(parseInt(page)) ? 1 : parseInt(page)) : 1;
-            status = status && (status === 'true' || status === 'false') ? status : null;
+            status = status && (status === 'true' || status === 'false') ? status === 'true' ? true : false : null;
             category = category || null;
             sort = sort && (parseInt(sort) === 1 || parseInt(sort) === -1) ? { price: parseInt(sort) } : null;
-            const filter = {};
-            if (status) filter.status = status;
-            if (category) filter.category = category;
-            let products = await Products.getInstance().getProducts({ limit, page, sort, filter });
+            let products = await Products.getInstance().getProducts({ limit, page, status, category, sort });
             if (page > products.totalPages) {
                 page = products.totalPages;
-                products = await Products.getInstance().getProducts({ limit, page, sort, filter });
+                products = await Products.getInstance().getProducts({ limit, page, status, category, sort });
             }
-            products.prevLink = products.prevPage ? `/products?page=${products.prevPage}` : null;
-            products.nextLink = products.nextPage ? `/products?page=${products.nextPage}` : null;
             return products;
         } catch (error) {
             throw error;
@@ -38,9 +34,6 @@ export default class ProductsServices {
 
     async getProductById(id) {
         try {
-            if (id.length !== 24) {
-                return null;
-            }
             return await Products.getInstance().getProductById(id);
         } catch (error) {
             throw error;
@@ -57,7 +50,11 @@ export default class ProductsServices {
 
     async createProduct(product) {
         try {
-            return await Products.getInstance().createProduct(product);
+            if (product.stock === 0) {
+                product.status = false;
+            }
+            const newProduct = new ProductDTO(product);
+            return await Products.getInstance().createProduct(newProduct);
         } catch (error) {
             throw error;
         }
@@ -65,7 +62,11 @@ export default class ProductsServices {
 
     async updateProduct(id, product) {
         try {
-            return await Products.getInstance().updateProduct(id, product);
+            if (product.stock === 0) {
+                product.status = false;
+            }
+            const updatedProduct = new ProductDTO(product);
+            return await Products.getInstance().updateProduct(id, updatedProduct);
         } catch (error) {
             throw error;
         }

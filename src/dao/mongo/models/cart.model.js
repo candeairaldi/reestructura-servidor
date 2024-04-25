@@ -1,13 +1,13 @@
-import mongoose from 'mongoose';
+import { Schema, SchemaTypes, model } from 'mongoose';
 
 const cartsCollection = 'carts';
 
-const cartSchema = new mongoose.Schema({
+const cartSchema = new Schema({
     products: {
         type: [
             {
-                product: { type: mongoose.Schema.Types.ObjectId, ref: 'products', required: true },
-                quantity: { type: Number, default: 1 }
+                product: { type: SchemaTypes.ObjectId, ref: 'products' },
+                quantity: { type: Number }
             },
         ],
         default: [],
@@ -19,6 +19,6 @@ cartSchema.pre('findOne', function (next) {
     next();
 });
 
-const cartModel = mongoose.model(cartsCollection, cartSchema);
+const cartModel = model(cartsCollection, cartSchema);
 
 export default cartModel;

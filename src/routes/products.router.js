@@ -27,10 +27,13 @@ export default class ProductsRouter extends CustomRouter {
         this.delete('/:pid', ['ADMIN'], ProductsController.getInstance().deleteProduct);
     }
 
-    validateProductFields(req, res, next) {
-        const product = req.body;
-        if (!product.title || !product.code) {
-            return res.sendUserError('Faltan completar campos obligatorios');
+    validateProduct(req, res, next) {
+        const { title, code, price } = req.body;
+        if (!title || !code || !price) {
+            return res.sendUserError('Los campos título, código y precio son obligatorios');
+        }
+        if (isNaN(price) || price < 0) {
+            return res.sendUserError('El precio debe ser un número positivo');
         }
         next();
     }

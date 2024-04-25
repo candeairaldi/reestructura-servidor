@@ -7,9 +7,10 @@ addProductForm.addEventListener('submit', async (event) => {
         description: addProductForm.description.value,
         code: addProductForm.code.value,
         price: addProductForm.price.value,
+        status: addProductForm.status.value,
         stock: addProductForm.stock.value,
         category: addProductForm.category.value,
-        thumbnails: addProductForm.thumbnails.value.split(',')
+        thumbnails: addProductForm.thumbnails.value
     }
     try {
         const response = await fetch('/api/products', {

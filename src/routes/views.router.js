@@ -22,7 +22,9 @@ export default class ViewsRouter extends CustomRouter {
 
         this.get('/register', ['PUBLIC'], ViewsController.getInstance().renderRegister);
 
-        this.get('/restore', ['PUBLIC'], ViewsController.getInstance().renderRestore);
+        this.get('/restore-password', ['PUBLIC'], ViewsController.getInstance().renderRestorePassword);
+
+        this.get('/reset-password', ['PUBLIC'], ViewsController.getInstance().renderResetPassword);
 
         this.get('/products', ['USER'], ViewsController.getInstance().renderProducts);
 
@@ -36,10 +38,14 @@ export default class ViewsRouter extends CustomRouter {
 
         this.get('/admin/products', ['ADMIN'], ViewsController.getInstance().renderAdminProducts);
 
+        this.get('/admin/product/:pid', ['ADMIN'], ViewsController.getInstance().renderAdminProduct);
+
         this.get('/admin/add-product', ['ADMIN'], ViewsController.getInstance().renderAdminAddProduct);
 
         this.get('/admin/edit-product/:pid', ['ADMIN'], ViewsController.getInstance().renderAdminEditProduct);
 
-        this.get('*', ['ALL'], ViewsController.getInstance().redirectToCorrectView);
+        this.get('/mockingproducts', ['ALL'], ViewsController.getInstance().showMockingProducts);
+
+        this.get('*', ['ALL'], ViewsController.getInstance().renderNotFound);
     }
 }

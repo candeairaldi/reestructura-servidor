@@ -20,6 +20,6 @@ socket.on('messages', messages => {
     messages.forEach(message => {
         const date = new Date(message.date).toLocaleDateString();
         const hour = new Date(message.date).toLocaleTimeString();
-        chatMessages.innerHTML += `<p>${date} ${hour} ${message.user.first_name} ${message.user.last_name} dijo: ${message.message}</p>`
+        chatMessages.innerHTML += `<p>${date} ${hour} ${message.user} dijo: ${message.message}</p>`
     });
 });

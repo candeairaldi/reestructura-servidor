@@ -1,18 +1,14 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const messagesCollection = 'messages';
 
-const messageSchema = new mongoose.Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'users', filter: true },
+const messageSchema = new Schema({
+    user: { type: String },
     text: { type: String },
     date: { type: Date }
 });
 
-messageSchema.pre('find', function (next) {
-    this.populate('user');
-    next();
-});
 
-const messageModel = mongoose.model(messagesCollection, messageSchema);
+const messageModel = model(messagesCollection, messageSchema);
 
 export default messageModel;

@@ -14,7 +14,14 @@ export default class ProductsMongoDAO {
 
     async getProducts(queryParams) {
         try {
-            const { limit, page, sort, filter } = queryParams;
+            const { limit, page, status, category, sort } = queryParams;
+            const filter = {};
+            if (status !== null) {
+                filter.status = status;
+            }
+            if (category) {
+                filter.category = category;
+            }
             return await productModel.paginate(filter, { limit, page, sort, lean: true });
         } catch (error) {
             throw error;

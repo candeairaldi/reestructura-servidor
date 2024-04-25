@@ -10,18 +10,3 @@ async function logout() {
         alert(error);
     }
 }
-
-async function deleteProduct(id) {
-    try {
-        const response = await fetch(`/api/products/${id}`, { method: 'DELETE' });
-        const data = await response.json();
-        if (data.status === 'error') {
-            alert(data.message);
-        } else {
-            alert('Producto elimidado exitosamente');
-            window.location.reload();
-        }
-    } catch (error) {
-        alert(error);
-    }
-}

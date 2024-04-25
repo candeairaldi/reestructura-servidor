@@ -1,15 +1,16 @@
-import { Users } from '../dao/factory.js';
 import { createHash } from '../utils.js';
-import CartsServices from '../services/carts.services.js';
+import CartsRepository from '../repositories/carts.repository.js';
+import UserDTO from '../dao/dtos/user.dto.js';
+import { Users } from '../dao/factory.js';
 
-export default class UsersServices {
+export default class UsersRepository {
     static #instance;
 
     constructor() { }
 
     static getInstance() {
         if (!this.#instance) {
-            this.#instance = new UsersServices();
+            this.#instance = new UsersRepository();
         }
         return this.#instance;
     }
@@ -19,9 +20,10 @@ export default class UsersServices {
             if (user.password && user.password.length > 0) {
                 user.password = createHash(user.password);
             }
-            const cart = await CartsServices.getInstance().createCart();
+            const cart = await CartsRepository.getInstance().createCart();
             user.cart = cart._id;
-            return await Users.getInstance().createUser(user);
+            const newUser = new UserDTO(user);
+            return await Users.getInstance().createUser(newUser);
         } catch (error) {
             throw error;
         }
@@ -35,9 +37,13 @@ export default class UsersServices {
         }
     }
 
-    async updateUser(id, user) {
+    async updateUserPassword(id, user) {
         try {
-            return await Users.getInstance().updateUser(id, user);
+            if (user.password && user.password.length > 0) {
+                user.password = createHash(user.password);
+            }
+            const updatedUser = new UserDTO(user);
+            return await Users.getInstance().updateUser(id, updatedUser);
         } catch (error) {
             throw error;
         }

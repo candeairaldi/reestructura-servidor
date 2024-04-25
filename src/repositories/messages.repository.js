@@ -1,20 +1,22 @@
+import MessageDTO from '../dao/dtos/message.dto.js';
 import { Messages } from '../dao/factory.js';
 
-export default class MessagesServices {
+export default class MessagesRepository {
     static #instance;
 
     constructor() { }
 
     static getInstance() {
         if (!this.#instance) {
-            this.#instance = new MessagesServices();
+            this.#instance = new MessagesRepository();
         }
         return this.#instance;
     }
 
-    async addMessage(user, message) {
+    async addMessage(user, text) {
         try {
-            return await Messages.getInstance().addMessage(user, message);
+            const newMessage = new MessageDTO({ user, text });
+            return await Messages.getInstance().addMessage(newMessage);
         } catch (error) {
             throw error;
         }

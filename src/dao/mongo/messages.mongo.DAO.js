@@ -12,9 +12,9 @@ export default class MessagesMongoDAO {
         return this.#instance;
     }
 
-    async addMessage(user, message) {
+    async addMessage(message) {
         try {
-            return await messageModel.create({ user, message });
+            return await messageModel.create(message);
         } catch (error) {
             throw error;
         }

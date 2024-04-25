@@ -1,4 +1,7 @@
-import ProductsServices from "../services/products.services.js";
+import ProductsRepository from '../repositories/products.repository.js';
+import CustomError from '../services/errors/custom.error.js';
+import { generateNewProductErrorInfo } from '../services/errors/info.js';
+import EErrors from '../services/errors/enums.js';
 
 export default class ProductsController {
     static #instance;
@@ -15,7 +18,7 @@ export default class ProductsController {
     async getProducts(req, res) {
         try {
             const queryParams = req.query;
-            const payload = await ProductsServices.getInstance().getProducts(queryParams);
+            const payload = await ProductsRepository.getInstance().getProducts(queryParams);
             res.sendSuccessPayload(payload);
         } catch (error) {
             console.log(error);
@@ -26,7 +29,7 @@ export default class ProductsController {
     async getProductById(req, res) {
         try {
             const { pid } = req.params;
-            const payload = await ProductsServices.getInstance().getProductById(pid);
+            const payload = await ProductsRepository.getInstance().getProductById(pid);
             if (!payload) {
                 return res.sendUserError(`No existe un producto con el id ${pid}`);
             }
@@ -39,15 +42,27 @@ export default class ProductsController {
 
     async createProduct(req, res) {
         try {
+            const { title, code, price } = req.body;
+            if (!title || !code || !price || isNaN(price) || price <= 0) {
+                CustomError.createError({
+                    name: 'Error de creación de producto',
+                    cause: generateNewProductErrorInfo({ title, code, price }),
+                    message: 'Error al intentar crear producto',
+                    code: EErrors.VALIDATION_ERROR
+                });
+            }
             const newProduct = req.body;
-            const product = await ProductsServices.getInstance().getProductByCode(newProduct.code);
+            const product = await ProductsRepository.getInstance().getProductByCode(newProduct.code);
             if (product) {
                 return res.sendUserError(`Ya existe un producto con el código ${newProduct.code}`);
             }
-            const payload = await ProductsServices.getInstance().createProduct(newProduct);
+            const payload = await ProductsRepository.getInstance().createProduct(newProduct);
             res.sendSuccessPayload(payload);
         } catch (error) {
             console.log(error);
+            if (error.code === 1) {
+                return res.sendUserError(`${error.message}: ${error.cause}`);
+            }
             res.sendServerError(error.message);
         }
     }
@@ -56,17 +71,17 @@ export default class ProductsController {
         try {
             const { pid } = req.params;
             const updatedProduct = req.body;
-            let product = await ProductsServices.getInstance().getProductById(pid);
+            let product = await ProductsRepository.getInstance().getProductById(pid);
             if (!product) {
                 return res.sendUserError(`No existe un producto con el id ${pid}`);
             }
             if (updatedProduct.code !== product.code) {
-                product = await ProductsServices.getInstance().getProductByCode(updatedProduct.code);
+                product = await ProductsRepository.getInstance().getProductByCode(updatedProduct.code);
                 if (product) {
                     return res.sendUserError(`Ya existe un producto con el código ${updatedProduct.code}`);
                 }
             }
-            const payload = await ProductsServices.getInstance().updateProduct(pid, updatedProduct);
+            const payload = await ProductsRepository.getInstance().updateProduct(pid, updatedProduct);
             res.sendSuccessPayload(payload);
         } catch (error) {
             console.log(error);
@@ -77,11 +92,11 @@ export default class ProductsController {
     async deleteProduct(req, res) {
         try {
             const { pid } = req.params;
-            const product = await ProductsServices.getInstance().getProductById(pid);
+            const product = await ProductsRepository.getInstance().getProductById(pid);
             if (!product) {
                 return res.sendUserError(`No existe un producto con el id ${pid}`);
             }
-            const payload = await ProductsServices.getInstance().deleteProduct(pid);
+            const payload = await ProductsRepository.getInstance().deleteProduct(pid);
             res.sendSuccessPayload(payload);
         } catch (error) {
             console.log(error);

@@ -28,9 +28,57 @@ export default class CartsMongoDAO {
         }
     }
 
-    async updateCart(id, products) {
+    async addProduct(cart, product, quantity) {
         try {
-            return await cartModel.findByIdAndUpdate(id, { products }, { new: true });
+            const productIndex = cart.products.findIndex(p => p.product._id.toString() === product._id.toString());
+            if (productIndex !== -1) {
+                cart.products[productIndex].quantity += quantity;
+            } else {
+                cart.products.push({ product, quantity });
+            }
+            return await cartModel.findByIdAndUpdate(cart._id, { products: cart.products }, { new: true });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateProductQuantity(cart, product, quantity) {
+        try {
+            const productIndex = cart.products.findIndex(p => p.product._id.toString() === product._id.toString());
+            if (productIndex === -1) {
+                return null;
+            }
+            cart.products[productIndex].quantity = quantity;
+            return await cartModel.findByIdAndUpdate(cart._id, { products: cart.products }, { new: true });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async removeProduct(cart, product) {
+        try {
+            const productIndex = cart.products.findIndex(p => p.product._id.toString() === product._id.toString());
+            if (productIndex === -1) {
+                return null;
+            }
+            cart.products.splice(productIndex, 1);
+            return await cartModel.findByIdAndUpdate(cart._id, { products: cart.products }, { new: true });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteCart(id) {
+        try {
+            return await cartModel.findByIdAndUpdate(id, { products: [] }, { new: true });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateCart(cart) {
+        try {
+            return await cartModel.findByIdAndUpdate(cart._id, { products: cart.products }, { new: true });
         } catch (error) {
             throw error;
         }
