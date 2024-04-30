@@ -5,10 +5,10 @@
   "main": "./src/app.js",
   "type": "module",
   "scripts": {
-    "mongo": "node ./src/app.js -p mongo",
-    "fs": "node ./src/app.js -p fs",
-    "dev-mongo": "nodemon ./src/app.js -p mongo",
-    "dev-fs": "nodemon ./src/app.js -p fs"
+    "start": "cross-env NODE_ENV=production node ./src/app.js -p mongo",
+    "start-fs": "cross-env NODE_ENV=production node ./src/app.js -p fs",
+    "start:dev": "cross-env NODE_ENV=development nodemon ./src/app.js -p mongo",
+    "start:dev-fs": "cross-env NODE_ENV=development nodemon ./src/app.js -p fs"
   },
   "author": "",
   "license": "ISC",
@@ -32,5 +32,9 @@
     "passport-local": "^1.0.0",
     "socket.io": "^4.7.5",
     "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.0"
   }
 }
