@@ -1,9 +1,10 @@
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import { program } from 'commander';
 import initializePersistence from './dao/factory.js';
 import express from 'express';
 import cors from 'cors';
 import compression from 'express-compression';
-import { __dirname } from './utils.js';
 import cookieParser from 'cookie-parser';
 import config from './config/config.js';
 import { addLogger } from './config/logger.config.js';
@@ -16,6 +17,11 @@ import SessionsRouter from './routes/sessions.router.js';
 import ViewsRouter from './routes/views.router.js';
 import initializeSocket from './config/socket.config.js';
 
+// Variables globales
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+//Persistencia inicialización
 program.option('-p, --persistence <type>', 'Tipo de persistencia (mongo o fs)').parse();
 if (!program.opts().persistence) {
     console.log('El parámetro --persistence es obligatorio y debe ser mongo o fs');
@@ -23,8 +29,10 @@ if (!program.opts().persistence) {
 }
 initializePersistence(program.opts().persistence);
 
+//Iniciar express
 const app = express();
 
+//middlewares
 app.use(cors());
 app.use(compression({ brotli: { enabled: true, zlib: {} } }));
 app.use(express.json());

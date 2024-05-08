@@ -30,14 +30,14 @@ export default class MailingServices {
     async sendResetPasswordEmail(user, resetLink) {
         try {
             return await this.transport.sendMail({
-                from: `Programación<${config.nodeMailerUser}>`,
+                from: `Programación <${config.nodeMailerUser}>`,
                 to: user.email,
                 subject: 'Reestablecer contraseña',
                 html:
                     `<p>Hola ${user.first_name},</p>
-                    <p>Para reestablecer tu contraseña, haz clic aquí:</p>
+                    <p>Para reestablecer tu contraseña, haz clic en el siguiente enlace:</p>
                     <a href="${resetLink}">Reestablecer contraseña</a>
-                    <p>De lo contrario, ignora este mensaje.</p>`
+                    <p>Si no solicitaste reestablecer tu contraseña, ignora este mensaje.</p>`
             });
         } catch (error) {
             throw error;
@@ -49,7 +49,7 @@ export default class MailingServices {
             const date = new Date(ticket.purchase_datetime).toLocaleDateString();
             const hour = new Date(ticket.purchase_datetime).toLocaleTimeString();
             return await this.transport.sendMail({
-                from: `Programación <${config.nodeMailerUser}>`,
+                from: `Programación<${config.nodeMailerUser}>`,
                 to: user.email,
                 subject: 'Confirmación de compra',
                 html:
@@ -59,7 +59,7 @@ export default class MailingServices {
                     <p>Fecha: ${date}</p>
                     <p>Hora: ${hour}</p>
                     <p>Monto: $${ticket.amount}</p>
-                    <p>¡Hasta pronto!</p>`
+                    <p>¡Vuelve pronto!</p>`
             });
         } catch (error) {
             throw error;

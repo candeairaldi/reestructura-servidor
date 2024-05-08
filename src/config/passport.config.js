@@ -1,10 +1,9 @@
 import passport from 'passport';
 import local from 'passport-local';
-import github from 'passport-github2';
 import jwt from 'passport-jwt';
 import { ExtractJwt } from 'passport-jwt';
 import { isValidPassword } from '../utils.js';
-import UsersRepository from '../repositories/users.repository.js';
+import UsersServices from '../services/users.services.js';
 import config from './config.js';
 
 const cookieExtractor = req => req?.signedCookies?.token ?? null;
@@ -73,29 +72,7 @@ const initializePassport = () => {
         }
     ));
 
-    passport.use('github', new github.Strategy(
-        {
-            clientID: config.gitHubClientId,
-            clientSecret: config.gitHubClientSecret,
-            callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
-        },
-        async (accessToken, refreshToken, profile, done) => {
-            try {
-                const user = await UsersRepository.getInstance().getUserByEmail(profile._json.email);
-                if (user) {
-                    return done(null, user);
-                } else {
-                    const newUser = await UsersRepository.getInstance().createUser({
-                        first_name: profile._json.name,
-                        email: profile._json.email,
-                    });
-                    return done(null, newUser);
-                }
-            } catch (error) {
-                return done(error);
-            }
-        }
-    ));
+
 
     passport.use('current', new jwt.Strategy(
         {

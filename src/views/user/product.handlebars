@@ -14,6 +14,7 @@
     <p>Categoría: {{product.category}}</p>
     <p>Imágenes: {{product.thumbnails}}</p>
     <div class="product-add-to-cart">
+        {{#if product.status}}
         <input type="number" id="quantity" value="1" min="1" max="{{product.stock}}" onkeydown="return false">
         <button onclick="addProductToCart('{{product._id}}', '{{user.cart}}')">Agregar producto</button>
         {{else}}
