@@ -1,6 +1,5 @@
-import ProductsRepository from '../repositories/products.repository.js';
-import CartsRepository from '../repositories/carts.repository.js';
-import { generateFakerProduct } from '../utils.js';
+import ProductsServices from '../services/products.services.js';
+import CartsServices from '../services/carts.services.js';
 
 export default class ViewsController {
     static #instance;
@@ -39,8 +38,10 @@ export default class ViewsController {
         try {
             const queryParams = req.query;
             const user = req.user;
-            const payload = await ProductsRepository.getInstance().getProducts(queryParams);
+            user.isPremium = user.role === 'premium';
+            const payload = await ProductsServices.getProducts(queryParams);
             const { docs: products, ...pagination } = payload;
+            // Se generan los enlaces de paginación
             const baseUrl = '/products';
             if (pagination.hasPrevPage) {
                 pagination.prevLink = `${baseUrl}?${new URLSearchParams({ ...queryParams, page: pagination.page - 1 }).toString()}`;
@@ -50,7 +51,6 @@ export default class ViewsController {
             }
             res.render('user/products', { user, products, pagination });
         } catch (error) {
-            req.logger.error(error);
             res.sendServerError(error.message);
         }
     }
@@ -59,10 +59,9 @@ export default class ViewsController {
         try {
             const { pid } = req.params;
             const user = req.user;
-            const product = await ProductsRepository.getInstance().getProductById(pid);
+            const product = await ProductsServices.getProductById(pid);
             res.render('user/product', { user, product });
         } catch (error) {
-            req.logger.error(error);
             res.sendServerError(error.message);
         }
     }
@@ -70,17 +69,18 @@ export default class ViewsController {
     async renderCart(req, res) {
         try {
             const { cid } = req.params;
-            const cart = await CartsRepository.getInstance().getCartById(cid);
+            const cart = await CartsServices.getCartById(cid);
+            // Se calcula el total de cada producto
             cart.products = cart.products.map(product => {
                 return {
                     ...product,
                     total: product.product.price * product.quantity
                 };
             });
+            // Se calcula el total del carrito
             cart.total = cart.products.reduce((acc, product) => acc + product.total, 0).toFixed(2);
             res.render('user/cart', { cart });
         } catch (error) {
-            req.logger.error(error);
             res.sendServerError(error.message);
         }
     }
@@ -95,12 +95,60 @@ export default class ViewsController {
         res.render('user/chat', { user });
     }
 
+    async renderPremiumProducts(req, res) {
+        try {
+            const queryParams = req.query;
+            const user = req.user;
+            const payload = await ProductsServices.getProductsByOwner(queryParams, user.email);
+            const { docs: products, ...pagination } = payload;
+            // Se generan los enlaces de paginación
+            const baseUrl = '/premium/products';
+            if (pagination.hasPrevPage) {
+                pagination.prevLink = `${baseUrl}?${new URLSearchParams({ ...queryParams, page: pagination.page - 1 }).toString()}`;
+            }
+            if (pagination.hasNextPage) {
+                pagination.nextLink = `${baseUrl}?${new URLSearchParams({ ...queryParams, page: pagination.page + 1 }).toString()}`;
+            }
+            res.render('premium/products', { user, products, pagination });
+        } catch (error) {
+            res.sendServerError(error.message);
+        }
+    }
+
+    async renderPremiumProduct(req, res) {
+        try {
+            const { pid } = req.params;
+            const user = req.user;
+            const product = await ProductsServices.getProductById(pid);
+            res.render('premium/product', { user, product });
+        } catch (error) {
+            res.sendServerError(error.message);
+        }
+    }
+
+    async renderPremiumAddProduct(req, res) {
+        const user = req.user;
+        res.render('premium/add-product', { user });
+    }
+
+    async renderPremiumEditProduct(req, res) {
+        try {
+            const { pid } = req.params;
+            const user = req.user;
+            const product = await ProductsServices.getProductById(pid);
+            res.render('premium/edit-product', { user, product });
+        } catch (error) {
+            res.sendServerError(error.message);
+        }
+    }
+
     async renderAdminProducts(req, res) {
         try {
             const queryParams = req.query;
             const user = req.user;
-            const payload = await ProductsRepository.getInstance().getProducts(queryParams);
+            const payload = await ProductsServices.getProducts(queryParams);
             const { docs: products, ...pagination } = payload;
+            // Se generan los enlaces de paginación
             const baseUrl = '/admin/products';
             if (pagination.hasPrevPage) {
                 pagination.prevLink = `${baseUrl}?${new URLSearchParams({ ...queryParams, page: pagination.page - 1 }).toString()}`;
@@ -110,7 +158,6 @@ export default class ViewsController {
             }
             res.render('admin/products', { user, products, pagination });
         } catch (error) {
-            req.logger.error(error);
             res.sendServerError(error.message);
         }
     }
@@ -118,12 +165,10 @@ export default class ViewsController {
     async renderAdminProduct(req, res) {
         try {
             const { pid } = req.params;
-            const product = await ProductsRepository.getInstance().getProductById(pid);
+            const product = await ProductsServices.getProductById(pid);
             res.render('admin/product', { product });
         } catch (error) {
-            req.logger.error(error);
             res.sendServerError(error.message);
-            
         }
     }
 
@@ -134,34 +179,12 @@ export default class ViewsController {
     async renderAdminEditProduct(req, res) {
         try {
             const { pid } = req.params;
-            const product = await ProductsRepository.getInstance().getProductById(pid);
+            const product = await ProductsServices.getProductById(pid);
             res.render('admin/edit-product', { product });
         } catch (error) {
-            req.logger.error(error);
             res.sendServerError(error.message);
         }
     }
-
-    showMockingProducts(req, res) {
-        const products = [];
-        for (let i = 0; i < 100; i++) {
-            products.push(generateFakerProduct());
-        }
-        res.json(products);
-    }
-
-    showLoggerTest(req, res) {
-        req.logger.fatal('mensaje fatal');
-        req.logger.error('mensaje de error');
-        req.logger.warning('mensaje de advertencia');
-        req.logger.info('mensaje de información');
-        req.logger.http('mensaje HTTP');
-        req.logger.debug('mensaje de depuración');
-        res.send('Mensajes de registro enviados');
-    }
-
-
-
 
     renderNotFound(req, res) {
         res.redirect('/');

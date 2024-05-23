@@ -22,10 +22,18 @@ export default class UsersServices {
                 user.password = createHash(user.password);
             }
             // Se crea un carrito para el usuario y se le asigna
-            const cart = await CartsServices.getInstance().createCart();
+            const cart = await CartsServices.createCart();
             user.cart = cart._id;
             const newUser = new UserDTO(user);
             return await Users.getInstance().createUser(newUser);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getUserById(id) {
+        try {
+            return await Users.getInstance().getUserById(id);
         } catch (error) {
             throw error;
         }
@@ -44,6 +52,15 @@ export default class UsersServices {
             if (user.password && user.password.length > 0) {
                 user.password = createHash(user.password);
             }
+            const updatedUser = new UserDTO(user);
+            return await Users.getInstance().updateUser(id, updatedUser);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateUser(id, user) {
+        try {
             const updatedUser = new UserDTO(user);
             return await Users.getInstance().updateUser(id, updatedUser);
         } catch (error) {

@@ -36,6 +36,14 @@ export default class ViewsRouter extends CustomRouter {
 
         this.get('/chat', ['USER'], ViewsController.getInstance().renderChat);
 
+        this.get('/premium/products', ['PREMIUM'], ViewsController.getInstance().renderPremiumProducts);
+
+        this.get('/premium/product/:pid', ['PREMIUM'], ViewsController.getInstance().renderPremiumProduct);
+
+        this.get('/premium/add-product', ['PREMIUM'], ViewsController.getInstance().renderPremiumAddProduct);
+
+        this.get('/premium/edit-product/:pid', ['PREMIUM'], ViewsController.getInstance().renderPremiumEditProduct);
+
         this.get('/admin/products', ['ADMIN'], ViewsController.getInstance().renderAdminProducts);
 
         this.get('/admin/product/:pid', ['ADMIN'], ViewsController.getInstance().renderAdminProduct);

@@ -10,7 +10,9 @@ async function addProductToCart(productId, cartId) {
         });
         const data = await response.json();
         if (data.status === 'success') {
-            alert('Producto agregado al carrito');
+            alert('Producto agregado al carrito exitosamente');
+        } else {
+            alert(data.message);
         }
     } catch (error) {
         alert(error);
