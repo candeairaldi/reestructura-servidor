@@ -12,3 +12,18 @@ async function changeUserRole(userId) {
         alert(error);
     }
 }
+
+async function deleteUser(id) {
+    try {
+        const response = await fetch(`/api/users/${id}`, { method: 'DELETE' });
+        const data = await response.json();
+        if (data.status === 'success') {
+            alert('Usuario eliminado exitosamente');
+            window.location.href = '/admin/users';
+        } else {
+            alert(data.message);
+        }
+    } catch (error) {
+        alert(error);
+    }
+}

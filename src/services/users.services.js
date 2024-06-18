@@ -1,21 +1,36 @@
+import { Users } from '../dao/factory.js';
+import UserDTO from '../dao/dtos/user.dto.js';
 import { createHash } from '../utils/passwords.utils.js';
 import CartsServices from './carts.services.js';
-import UserDTO from '../dao/dtos/user.dto.js';
-import { Users } from '../dao/factory.js';
 
 export default class UsersServices {
-    static #instance;
-
-    constructor() { }
-
-    static getInstance() {
-        if (!this.#instance) {
-            this.#instance = new UsersServices();
+    static async getUsers(queryParams) {
+        try {
+            let { page } = queryParams;
+            page = page ? (parseInt(page) < 1 || isNaN(parseInt(page)) ? 1 : parseInt(page)) : 1;
+            return await Users.getInstance().getUsers({ page });
+        } catch (error) {
+            throw error;
         }
-        return this.#instance;
     }
 
-    async createUser(user) {
+    static async getUserById(id) {
+        try {
+            return await Users.getInstance().getUser({ _id: id });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getUserByEmail(email) {
+        try {
+            return await Users.getInstance().getUser({ email: email });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async createUser(user) {
         try {
             // Se valida si el usuario tiene una contraseña y si la tiene, se encripta
             if (user.password && user.password.length > 0) {
@@ -31,23 +46,16 @@ export default class UsersServices {
         }
     }
 
-    async getUserById(id) {
+    static async updateUser(id, user) {
         try {
-            return await Users.getInstance().getUserById(id);
+            const updatedUser = new UserDTO(user);
+            return await Users.getInstance().updateUser(id, updatedUser);
         } catch (error) {
             throw error;
         }
     }
 
-    async getUserByEmail(email) {
-        try {
-            return await Users.getInstance().getUserByEmail(email);
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async updateUserPassword(id, user) {
+    static async updateUserPassword(id, user) {
         try {
             if (user.password && user.password.length > 0) {
                 user.password = createHash(user.password);
@@ -59,10 +67,18 @@ export default class UsersServices {
         }
     }
 
-    async updateUser(id, user) {
+    static async deleteInactiveUsers() {
         try {
-            const updatedUser = new UserDTO(user);
-            return await Users.getInstance().updateUser(id, updatedUser);
+            const cutOffDate = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+            return await Users.getInstance().deleteInactiveUsers(cutOffDate);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async deleteUser(id) {
+        try {
+            return await Users.getInstance().deleteUser(id);
         } catch (error) {
             throw error;
         }

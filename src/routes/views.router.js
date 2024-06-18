@@ -16,6 +16,8 @@ export default class ViewsRouter extends CustomRouter {
     }
 
     init() {
+        this.getRouter().get('/favicon.ico', (req, res) => res.status(204).end());
+
         this.get('/', ['PUBLIC'], ViewsController.getInstance().renderIndex);
 
         this.get('/login', ['PUBLIC'], ViewsController.getInstance().renderLogin);
@@ -34,6 +36,8 @@ export default class ViewsRouter extends CustomRouter {
 
         this.get('/profile', ['USER'], ViewsController.getInstance().renderProfile);
 
+        this.get('/upload-documents', ['USER'], ViewsController.getInstance().renderUploadDocuments);
+
         this.get('/chat', ['USER'], ViewsController.getInstance().renderChat);
 
         this.get('/premium/products', ['PREMIUM'], ViewsController.getInstance().renderPremiumProducts);
@@ -44,6 +48,8 @@ export default class ViewsRouter extends CustomRouter {
 
         this.get('/premium/edit-product/:pid', ['PREMIUM'], ViewsController.getInstance().renderPremiumEditProduct);
 
+        this.get('/admin/main', ['ADMIN'], ViewsController.getInstance().renderAdminMain);
+
         this.get('/admin/products', ['ADMIN'], ViewsController.getInstance().renderAdminProducts);
 
         this.get('/admin/product/:pid', ['ADMIN'], ViewsController.getInstance().renderAdminProduct);
@@ -51,6 +57,10 @@ export default class ViewsRouter extends CustomRouter {
         this.get('/admin/add-product', ['ADMIN'], ViewsController.getInstance().renderAdminAddProduct);
 
         this.get('/admin/edit-product/:pid', ['ADMIN'], ViewsController.getInstance().renderAdminEditProduct);
+
+        this.get('/admin/users', ['ADMIN'], ViewsController.getInstance().renderAdminUsers);
+
+        this.get('/admin/user/:uid', ['ADMIN'], ViewsController.getInstance().renderAdminUser);
 
         this.get('*', ['ALL'], ViewsController.getInstance().renderNotFound);
     }

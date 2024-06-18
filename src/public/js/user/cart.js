@@ -8,8 +8,10 @@ async function updateProductQuantity(productId, cartId) {
         });
         const data = await response.json();
         if (data.status === 'success') {
-            alert('Cantidad actualizada');
+            alert('Cantidad del producto actualizada exitosamente');
             window.location.reload();
+        } else {
+            alert(data.message);
         }
     } catch (error) {
         alert(error);
@@ -21,21 +23,25 @@ async function removeProductFromCart(productId, cartId) {
         const response = await fetch(`/api/carts/${cartId}/products/${productId}`, { method: 'DELETE' });
         const data = await response.json();
         if (data.status === 'success') {
-            alert('Producto eliminado del carrito');
+            alert('Producto eliminado del carrito exitosamente');
             window.location.reload();
+        } else {
+            alert(data.message);
         }
     } catch (error) {
         alert(error);
     }
 }
 
-async function deleteCart(cartId) {
+async function clearCart(cartId) {
     try {
-        const response = await fetch(`/api/carts/${cartId}`, { method: 'DELETE' });
+        const response = await fetch(`/api/carts/${cartId}`, { method: 'PUT' });
         const data = await response.json();
         if (data.status === 'success') {
-            alert('Productos eliminados del carrito');
+            alert('Carrito vaciado exitosamente');
             window.location.reload();
+        } else {
+            alert(data.message);
         }
     } catch (error) {
         alert(error);

@@ -1,6 +1,6 @@
 [
     {
-        "id": 1,
+        "_id": 1,
         "title": "tostadas sin tacc",
         "description": "saladas/dulces",
         "code": "code1",
@@ -8,10 +8,11 @@
         "status": true,
         "stock": 12,
         "category": "alimentos",
-        "thumbnails": "Link de la foto"
-        
+        "thumbnails": "Link de la foto",
+        "owner": "admin"
     },
     {
+        "_id": 2,
         "title": "Tostadas de arroz",
         "description": "Sabor jamón",
         "code": "code2",
@@ -19,9 +20,11 @@
         "status": true,
         "stock": 15,
         "category": "alimentos",
-        "thumbnails": "Link de la foto"
+        "thumbnails": "Link de la foto",
+        "owner": "admin"
     },
     {
+        "_id": 3,
         "title": "Tostadas de mesa",
         "description": "dulces/saladas",
         "code": "code3",
@@ -29,9 +32,11 @@
         "status": true,
         "stock": 19,
         "category": "alimentos",
-        "thumbnails": "Link de la foto"
+        "thumbnails": "Link de la foto",
+        "owner": "admin"
     },
     {
+        "_id": 4,
         "title": "Tostadas de arroz",
         "description": "Sabor queso",
         "code": "code4",
@@ -39,9 +44,11 @@
         "status": true,
         "stock": 25,
         "category": "alimentos",
-        "thumbnails": "Link de la foto"
+        "thumbnails": "Link de la foto",
+        "owner": "admin"
     },
     {
+        "_id": 5,
         "title": "Galletitas dulces",
         "description": "Con frutos secos",
         "code": "code5",
@@ -49,9 +56,11 @@
         "status": true,
         "stock": 4,
         "category": "alimentos",
-        "thumbnails": "Link de la foto"
+        "thumbnails": "Link de la foto",
+        "owner": "admin"
     },
     {
+        "_id": 6,
         "title": "Galletitas dulces",
         "description": "Con pasas",
         "code": "code6",
@@ -59,6 +68,7 @@
         "status": true,
         "stock": 5,
         "category": "alimentos",
-        "thumbnails": "Link de la foto"
+        "thumbnails": "Link de la foto",
+        "owner": "admin"
     }
 ]

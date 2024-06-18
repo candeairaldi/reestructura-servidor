@@ -1,5 +1,4 @@
 node_modules/
-src/dao/fs/data
 .env
 .env.dev
 .env.prod

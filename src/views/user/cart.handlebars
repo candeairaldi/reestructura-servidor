@@ -1,7 +1,7 @@
 <h1>Carrito ID {{cart._id}}</h1>
 
 <nav>
-    <a href="/products">Atrás</a>
+    <a href="/products">Volver</a>
 </nav>
 
 {{#if cart.products}}
@@ -37,15 +37,15 @@
     {{/each}}
 </table>
 
-<h3>Total ${{cart.total}}</h3>
+<h2>Total del carrito ${{cart.total}}</h2>
 
 <div>
-    <button onclick="deleteCart('{{cart._id}}')">Vaciar</button>
-    <button onclick="purchaseCart('{{cart._id}}')">Comprar</button>
+    <button onclick="clearCart('{{cart._id}}')">Vaciar carrito</button>
+    <button onclick="purchaseCart('{{cart._id}}')">Comprar carrito</button>
 </div>
 
 {{else}}
-<h3>No hay productos seleccionados</h3>
+<h2>No hay productos</h2>
 {{/if}}
 
 <script src="/js/user/cart.js"></script>

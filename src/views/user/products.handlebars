@@ -7,10 +7,14 @@
 
     <a href="/chat">Chat</a>
 
+    {{#if user.isPremium}}
+    <a href="/premium/products">Premium</a>
+    {{/if}}
 
     <button onclick="logout()">Cerrar sesión</button>
 </nav>
 
+{{#if products}}
 <form class="query-params-form" id="queryParamsForm">
     <div>
         <label for="limit">Límite</label>
@@ -76,5 +80,9 @@
     <a>Siguiente</a>
     {{/if}}
 </div>
+
+{{else}}
+<h2>No hay productos</h2>
+{{/if}}
 
 <script src="/js/user/products.js"></script>

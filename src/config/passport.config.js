@@ -1,10 +1,10 @@
 import passport from 'passport';
 import local from 'passport-local';
 import jwt from 'passport-jwt';
-import { ExtractJwt } from 'passport-jwt';
-import { isValidPassword } from '../utils.js';
 import UsersServices from '../services/users.services.js';
 import config from './config.js';
+import { isValidPassword } from '../utils/passwords.utils.js';
+import { ExtractJwt } from 'passport-jwt';
 
 const cookieExtractor = req => req?.signedCookies?.token ?? null;
 
@@ -13,7 +13,7 @@ const initializePassport = () => {
         { usernameField: 'email', passReqToCallback: true },
         async (req, username, password, done) => {
             try {
-                const { first_name, last_name, age } = req.body;
+                const { first_name, last_name, age, documents, last_connection } = req.body;
                 if (!first_name || !last_name || !username || !password) {
                     return done(null, false, 'Los campos nombre, apellido, correo electrónico y contraseña son obligatorios');
                 }
@@ -34,7 +34,10 @@ const initializePassport = () => {
                     last_name,
                     email: username,
                     age,
-                    password
+                    password,
+                    role,
+                    documents,
+                    last_connection
                 });
                 return done(null, newUser);
             } catch (error) {

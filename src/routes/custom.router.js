@@ -32,6 +32,10 @@ export default class CustomRouter {
 
     handlePolicies(policies) {
         return (req, res, next) => {
+            // Si la ruta es de acceso libre, se permite el acceso
+            if (policies.includes('ALL')) {
+                return next();
+            }
             // Si la ruta es de la documentación, se permite el acceso
             if (req.originalUrl.startsWith('/api/docs')) {
                 return next();
@@ -43,16 +47,13 @@ export default class CustomRouter {
 
             // Si la ruta no es de la API (views), se redirige según el rol del usuario
             if (!req.originalUrl.startsWith('/api')) {
-                if (policies.includes('ALL')) {
-                    return next();
-                }
                 if (token) {
                     if (user.role === 'user' && (policies.includes('PUBLIC') || policies.includes('PREMIUM') || policies.includes('ADMIN'))) {
                         return res.redirect('/products');
                     } else if (user.role === 'premium' && (policies.includes('PUBLIC') || policies.includes('ADMIN'))) {
                         return res.redirect('/products');
                     } else if (user.role === 'admin' && (policies.includes('PUBLIC') || policies.includes('USER') || policies.includes('PREMIUM'))) {
-                        return res.redirect('/admin/products');
+                        return res.redirect('/admin/main');
                     }
                 } else if (policies.includes('USER') || policies.includes('PREMIUM') || policies.includes('ADMIN')) {
                     return res.redirect('/');
@@ -65,14 +66,17 @@ export default class CustomRouter {
             }
             // Si el usuario no está autenticado, se devuelve un error
             if (!token) {
+                req.logger.warning('Debes iniciar sesión para realizar esta acción');
                 return res.status(401).json({ status: 'error', message: 'Debes iniciar sesión para realizar esta acción' });
             }
             // Si el token no es válido, se devuelve un error
             if (!user) {
+                req.logger.warning('Token inválido');
                 return res.status(401).json({ status: 'error', message: 'Token inválido' });
             }
             // Si el usuario no tiene permisos, se devuelve un error
             if (!policies.includes(user.role.toUpperCase())) {
+                req.logger.warning('No tienes permisos para realizar esta acción');
                 return res.status(403).json({ status: 'error', message: 'No tienes permisos para realizar esta acción' });
             }
             // Si el usuario tiene permisos, se permite el acceso
@@ -81,8 +85,7 @@ export default class CustomRouter {
     }
 
     generateCustomResponses(req, res, next) {
-        res.sendSuccessPayload = payload => res.status(200).json({ status: 'success', payload });
-        res.sendSuccessMessage = message => res.status(200).json({ status: 'success', message });
+        res.sendSuccess = payload => res.status(200).json({ status: 'success', payload });
         res.sendUserError = error => res.status(400).json({ status: 'error', message: error });
         res.sendServerError = error => res.status(500).json({ status: 'error', message: error });
         next();

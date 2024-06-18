@@ -30,7 +30,7 @@ export default class MailingServices {
     async sendResetPasswordEmail(user, resetLink) {
         try {
             return await this.transport.sendMail({
-                from: `Programación <${config.nodeMailerUser}>`,
+                from: `Programación Backend <${config.nodeMailerUser}>`,
                 to: user.email,
                 subject: 'Reestablecer contraseña',
                 html:
@@ -49,7 +49,7 @@ export default class MailingServices {
             const date = new Date(ticket.purchase_datetime).toLocaleDateString();
             const hour = new Date(ticket.purchase_datetime).toLocaleTimeString();
             return await this.transport.sendMail({
-                from: `Programación<${config.nodeMailerUser}>`,
+                from: `Programación Backend <${config.nodeMailerUser}>`,
                 to: user.email,
                 subject: 'Confirmación de compra',
                 html:
@@ -60,6 +60,38 @@ export default class MailingServices {
                     <p>Hora: ${hour}</p>
                     <p>Monto: $${ticket.amount}</p>
                     <p>¡Vuelve pronto!</p>`
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async sendProductDeletedEmail(user, product) {
+        try {
+            return await this.transport.sendMail({
+                from: `Programación Backend <${config.nodeMailerUser}>`,
+                to: user.email,
+                subject: 'Producto eliminado',
+                html:
+                    `<p>Hola ${user.first_name},</p>
+                    <p>El producto ${product.title} ha sido eliminado</p>
+                    <p>Si tienes alguna duda, por favor contáctanos.</p>`
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async sendUserDeletedEmail(user) {
+        try {
+            return await this.transport.sendMail({
+                from: `Programación Backend <${config.nodeMailerUser}>`,
+                to: user.email,
+                subject: 'Cuenta eliminada',
+                html:
+                    `<p>Hola ${user.first_name},</p>
+                    <p>Tu cuenta ha sido eliminada</p>
+                    <p>Si tienes alguna duda, por favor contáctanos.</p>`
             });
         } catch (error) {
             throw error;
