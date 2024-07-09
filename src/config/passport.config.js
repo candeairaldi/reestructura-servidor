@@ -1,5 +1,6 @@
 import passport from 'passport';
 import local from 'passport-local';
+import github from 'passport-github2';
 import jwt from 'passport-jwt';
 import UsersServices from '../services/users.services.js';
 import config from './config.js';
@@ -13,7 +14,7 @@ const initializePassport = () => {
         { usernameField: 'email', passReqToCallback: true },
         async (req, username, password, done) => {
             try {
-                const { first_name, last_name, age, documents, last_connection } = req.body;
+                const { first_name, last_name, age, role, documents, last_connection } = req.body;
                 if (!first_name || !last_name || !username || !password) {
                     return done(null, false, 'Los campos nombre, apellido, correo electrónico y contraseña son obligatorios');
                 }
@@ -25,11 +26,11 @@ const initializePassport = () => {
                 if (!passwordRegex.test(password)) {
                     return done(null, false, 'La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un caracter especial');
                 }
-                const user = await UsersRepository.getInstance().getUserByEmail(username);
+                const user = await UsersServices.getUserByEmail(username);
                 if (user) {
                     return done(null, false, `Ya existe un usuario registrado con el correo electrónico ${username}`);
                 }
-                const newUser = await UsersRepository.getInstance().createUser({
+                const newUser = await UsersServices.createUser({
                     first_name,
                     last_name,
                     email: username,
@@ -61,7 +62,7 @@ const initializePassport = () => {
                         role: 'admin'
                     });
                 }
-                const user = await UsersRepository.getInstance().getUserByEmail(username);
+                const user = await UsersServices.getUserByEmail(username);
                 if (!user) {
                     return done(null, false, `No existe un usuario registrado con el correo electrónico ${username}`);
                 }
@@ -75,7 +76,29 @@ const initializePassport = () => {
         }
     ));
 
-
+    passport.use('github', new github.Strategy(
+        {
+            clientID: config.gitHubClientId,
+            clientSecret: config.gitHubClientSecret,
+            callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                const user = await UsersServices.getUserByEmail(profile._json.email);
+                if (user) {
+                    return done(null, user);
+                } else {
+                    const newUser = await UsersServices.createUser({
+                        first_name: profile._json.name,
+                        email: profile._json.email,
+                    });
+                    return done(null, newUser);
+                }
+            } catch (error) {
+                return done(error);
+            }
+        }
+    ));
 
     passport.use('current', new jwt.Strategy(
         {

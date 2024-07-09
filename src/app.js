@@ -26,6 +26,8 @@ initializePersistence(options.storage);
 //Iniciar express
 const app = express();
 
+
+
 //middlewares
 app.use(cors());
 app.use(compression({ brotli: { enabled: true, zlib: {} } }));
@@ -35,10 +37,12 @@ app.use(express.static(`${__dirname}/public`));
 app.use(cookieParser(config.cookieSecret));
 app.use(addLogger);
 
+
 //conf de handlebars
 app.engine('handlebars', handlebars.engine());
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'handlebars');
+
 
 //Inicializacion de passport
 initializePassport();
@@ -51,6 +55,8 @@ app.use('/api/products', ProductsRouter.getInstance().getRouter());
 app.use('/api/carts', CartsRouter.getInstance().getRouter());
 app.use('/api/tickets', TicketsRouter.getInstance().getRouter());
 
+
+
 // Documentación api
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
@@ -59,7 +65,7 @@ app.use('/', ViewsRouter.getInstance().getRouter());
 
 
 //inicializacion de servidor
-const httpServer = app.listen(config.port, () => console.log(`Servidor escuchando en el puerto ${config.port}`));
+const httpServer = app.listen(config.port, () => console.log(`Servidor escuchando en puerto ${config.port}`));
 
 //inicializacion de socket.io
 initializeSocket(httpServer);

@@ -1,4 +1,5 @@
 import ProductsServices from '../services/products.services.js';
+import MailingServices from '../services/mailing.services.js';
 
 export default class ProductsController {
     static async getProducts(req, res) {
@@ -6,7 +7,7 @@ export default class ProductsController {
             const queryParams = req.query;
             const payload = await ProductsServices.getProducts(queryParams);
             req.logger.info('Consulta de productos exitosa');
-            res.sendSuccessPayload(payload);
+            res.sendSuccess(payload);
         } catch (error) {
             req.logger.error(`Error al consultar productos: ${error.message}`);
             res.sendServerError(error.message);
@@ -22,7 +23,7 @@ export default class ProductsController {
                 return res.sendUserError(`No existe un producto con el id ${pid}`);
             }
             req.logger.info(`Consulta del producto id ${pid} exitosa`);
-            res.sendSuccessPayload(payload);
+            res.sendSuccess(payload);
         } catch (error) {
             req.logger.error(`Error al consultar producto id ${pid}: ${error.message}`);
             res.sendServerError(error.message);
@@ -39,7 +40,7 @@ export default class ProductsController {
             }
             const payload = await ProductsServices.createProduct(newProduct);
             req.logger.info(`Producto id ${payload._id} creado exitosamente`);
-            res.sendSuccessPayload(payload);
+            res.sendSuccess(payload);
         } catch (error) {
             req.logger.error(`Error al crear producto: ${error.message}`);
             res.sendServerError(error.message);
@@ -56,9 +57,9 @@ export default class ProductsController {
                 req.logger.warning(`No existe un producto con el id ${pid}`)
                 return res.sendUserError(`No existe un producto con el id ${pid}`);
             }
-            if (product.owner !== user.email && user.role !== 'admin') {
-                req.logger.warning(`El producto id ${pid} no pertenece al usuario ${user.email}`);
-                return res.sendUserError(`El producto id ${pid} no pertenece al usuario ${user.email}`);
+            if (user.role !== 'admin' && product.owner !== user.email) {
+                req.logger.warning(`El producto id ${pid} no pertenece al usuario id ${user._id}`);
+                return res.sendUserError(`El producto id ${pid} no pertenece al usuario id ${user._id}`);
             }
             if (updatedProduct.code !== product.code) {
                 product = await ProductsServices.getProductByCode(updatedProduct.code);
@@ -69,7 +70,7 @@ export default class ProductsController {
             }
             const payload = await ProductsServices.updateProduct(pid, updatedProduct);
             req.logger.info(`Producto id ${pid} actualizado exitosamente`);
-            res.sendSuccessPayload(payload);
+            res.sendSuccess(payload);
         } catch (error) {
             req.logger.error(`Error al actualizar producto id ${pid}: ${error.message}`);
             res.sendServerError(error.message);
@@ -85,13 +86,16 @@ export default class ProductsController {
                 req.logger.warning(`No existe un producto con el id ${pid}`);
                 return res.sendUserError(`No existe un producto con el id ${pid}`);
             }
-            if (product.owner !== user.email && user.role !== 'admin') {
-                req.logger.warning(`El producto id ${pid} no pertenece al usuario ${user.email}`);
-                return res.sendUserError(`El producto id ${pid} no pertenece al usuario ${user.email}`);
+            if (user.role !== 'admin' && product.owner !== user.email) {
+                req.logger.warning(`El producto id ${pid} no pertenece al usuario id ${user._id}`);
+                return res.sendUserError(`El producto id ${pid} no pertenece al usuario ${user._id}`);
             }
             const payload = await ProductsServices.deleteProduct(pid);
             req.logger.info(`Producto id ${pid} eliminado exitosamente`);
-            res.sendSuccessPayload(payload);
+            if (product.owner !== 'admin') {
+                MailingServices.getInstance().sendProductDeletedEmail(user, product);
+            }
+            res.sendSuccess(payload);
         } catch (error) {
             req.logger.error(`Error al eliminar producto id ${pid}: ${error.message}`);
             res.sendServerError(error.message);

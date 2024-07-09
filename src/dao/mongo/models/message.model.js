@@ -8,7 +8,6 @@ const messageSchema = new Schema({
     date: { type: Date, required: true }
 });
 
-
 const messageModel = model(messagesCollection, messageSchema);
 
 export default messageModel;

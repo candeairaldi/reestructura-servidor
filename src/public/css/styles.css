@@ -1,19 +1,19 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 h1 {
-    color: red;
+    color: orange;
     text-align: center;
 }
 
 h2 {
-    color: blue;
+    color: red;
     text-align: center;
 }
 
 h3 {
-    color: green;
+    color: blue;
     text-align: center;
 }
 
@@ -28,7 +28,7 @@ nav {
 
 a,
 button {
-    background-color: lightgray;
+    background-color: teal;
     font-size: 1rem;
     color: black;
     text-decoration: none;

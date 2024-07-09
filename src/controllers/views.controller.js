@@ -1,5 +1,6 @@
 import ProductsServices from '../services/products.services.js';
 import CartsServices from '../services/carts.services.js';
+import UsersServices from '../services/users.services.js';
 
 export default class ViewsController {
     static #instance;
@@ -90,6 +91,11 @@ export default class ViewsController {
         res.render('user/profile', { user });
     }
 
+    renderUploadDocuments(req, res) {
+        const user = req.user;
+        res.render('user/upload-documents', { user });
+    }
+
     renderChat(req, res) {
         const user = req.user;
         res.render('user/chat', { user });
@@ -99,7 +105,8 @@ export default class ViewsController {
         try {
             const queryParams = req.query;
             const user = req.user;
-            const payload = await ProductsServices.getProductsByOwner(queryParams, user.email);
+            queryParams.owner = user.email;
+            const payload = await ProductsServices.getProducts(queryParams);
             const { docs: products, ...pagination } = payload;
             // Se generan los enlaces de paginación
             const baseUrl = '/premium/products';
@@ -142,10 +149,13 @@ export default class ViewsController {
         }
     }
 
+    renderAdminMain(req, res) {
+        res.render('admin/main');
+    }
+
     async renderAdminProducts(req, res) {
         try {
             const queryParams = req.query;
-            const user = req.user;
             const payload = await ProductsServices.getProducts(queryParams);
             const { docs: products, ...pagination } = payload;
             // Se generan los enlaces de paginación
@@ -156,7 +166,7 @@ export default class ViewsController {
             if (pagination.hasNextPage) {
                 pagination.nextLink = `${baseUrl}?${new URLSearchParams({ ...queryParams, page: pagination.page + 1 }).toString()}`;
             }
-            res.render('admin/products', { user, products, pagination });
+            res.render('admin/products', { products, pagination });
         } catch (error) {
             res.sendServerError(error.message);
         }
@@ -181,6 +191,35 @@ export default class ViewsController {
             const { pid } = req.params;
             const product = await ProductsServices.getProductById(pid);
             res.render('admin/edit-product', { product });
+        } catch (error) {
+            res.sendServerError(error.message);
+        }
+    }
+
+    async renderAdminUsers(req, res) {
+        try {
+            const queryParams = req.query;
+            const payload = await UsersServices.getUsers(queryParams);
+            const { docs: users, ...pagination } = payload;
+            // Se generan los enlaces de paginación
+            const baseUrl = '/admin/users';
+            if (pagination.hasPrevPage) {
+                pagination.prevLink = `${baseUrl}?${new URLSearchParams({ page: pagination.prevPage }).toString()}`;
+            }
+            if (pagination.hasNextPage) {
+                pagination.nextLink = `${baseUrl}?${new URLSearchParams({ page: pagination.nextPage }).toString()}`;
+            }
+            res.render('admin/users', { users, pagination });
+        } catch (error) {
+            res.sendServerError(error.message);
+        }
+    }
+
+    async renderAdminUser(req, res) {
+        try {
+            const { uid } = req.params;
+            const user = await UsersServices.getUserById(uid);
+            res.render('admin/user', { user });
         } catch (error) {
             res.sendServerError(error.message);
         }

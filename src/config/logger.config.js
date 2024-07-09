@@ -53,24 +53,24 @@ const prodLogger = winston.createLogger({
 winston.addColors(customLevelOptions.colors);
 
 export const addLogger = (req, res, next) => {
-    // Se obtiene el entorno de ejecución
+    // entorno de ejecución
     const environment = options.environment;
-    // Se carga el logger correspondiente al entorno
+    // Se carga el logger
     const logger = environment === 'development' ? devLogger : prodLogger;
-    // Se añaden los métodos para cada nivel de log
+    // métodos 
     Object.keys(customLevelOptions.levels).forEach(level => {
         logger[level] = (message) => logger.log({ level, message });
     });
-    // No se loguean las peticiones a las rutas de las vistas y de la documentación de la API
+    // No se loguean las peticiones: vistas y documentación de la API
     if (!req.originalUrl.startsWith('/api') || req.originalUrl.startsWith('/api/docs')) {
         return next();
     }
-    // Se añade la fecha y hora de cada petición
+    // fecha y hora de petición
     const currentDate = new Date().toLocaleDateString();
     const currentTime = new Date().toLocaleTimeString();
     // Se loguea la petición
     logger.http(`${req.method} ${req.originalUrl} ${currentDate} ${currentTime}`);
-    // Se añade el logger a la petición
+    // logger a la petición
     req.logger = logger;
     next();
 };

@@ -1,12 +1,12 @@
 <h1>Chat</h1>
 
 <nav>
-    <a href="/products">Atrás</a>
+    <a href="/products">Ir atrás</a>
 </nav>
 
 <div>
-    <input id="message" class="input-chat" onkeydown="handleKeyDown(event, '{{user.id}}')">
-    <button onclick="sendMessage('{{user.id}}')">Enviar</button>
+    <input id="text" class="input-chat" onkeydown="handleKeyDown(event, '{{user.first_name}}')">
+    <button onclick="sendMessage('{{user.first_name}}')">Enviar</button>
 </div>
 
 <div id="chatMessages" class="chat-messages"></div>

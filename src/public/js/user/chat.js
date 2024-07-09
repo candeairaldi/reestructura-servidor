@@ -1,5 +1,5 @@
 const socket = io();
-const message = document.querySelector('#message');
+const text = document.querySelector('#text');
 
 function handleKeyDown(event, user) {
     if (event.key === 'Enter') {
@@ -8,18 +8,18 @@ function handleKeyDown(event, user) {
 }
 
 function sendMessage(user) {
-    if (message.value) {
-        socket.emit('message', user, message.value);
-        message.value = '';
+    if (text.value) {
+        socket.emit('saveMessage', user, text.value);
+        text.value = '';
     }
 }
 
-socket.on('messages', messages => {
+socket.on('loadMessages', messages => {
     const chatMessages = document.querySelector('#chatMessages');
     chatMessages.innerHTML = '';
     messages.forEach(message => {
         const date = new Date(message.date).toLocaleDateString();
         const hour = new Date(message.date).toLocaleTimeString();
-        chatMessages.innerHTML += `<p>${date} ${hour} ${message.user} dijo: ${message.message}</p>`
+        chatMessages.innerHTML += `<p>${date} ${hour} ${message.user} dijo: ${message.text}</p>`
     });
 });

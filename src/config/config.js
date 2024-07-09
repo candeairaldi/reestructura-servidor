@@ -1,9 +1,9 @@
 import options from './args.config.js';
 import dotenv from 'dotenv';
 
-// Se obtiene el entorno de ejecución
+// entorno de ejecución
 const environment = options.environment;
-// Se carga el archivo de configuración correspondiente al entorno
+// archivo de config al entorno
 dotenv.config({ path: environment === 'development' ? './.env.dev' : './.env.prod' });
 
 const config = {
